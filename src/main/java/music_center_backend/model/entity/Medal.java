@@ -19,7 +19,7 @@ public class Medal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "medal_name", nullable = false)
+    @Column(name = "medal_name", unique = true, nullable = false)
     private String medalName;
 
     @Column(name = "medal_description", nullable = false)

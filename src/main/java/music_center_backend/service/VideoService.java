@@ -23,7 +23,7 @@ public class VideoService {
         this.videoRepository = videoRepository;
     }
 
-    public List<VideoResponse> getAll() {
+    public List<VideoResponse> getAllVideos() {
         return toResponse(videoRepository.findAll());
     }
     public List<VideoResponse> searchVideos(String title, LocalDate after, LocalDate startDate, LocalDate endDate) {
@@ -71,7 +71,7 @@ public class VideoService {
     @Transactional
     public void deleteVideo(String publicId) {
         Video video = videoRepository.findByPublicId(publicId)
-                            .orElseThrow(() -> new VideoNotFoundException("No video with title " + publicId));
+                            .orElseThrow(() -> new VideoNotFoundException("No video with publicId " + publicId));
         videoRepository.deleteById(video.getId());
     }
     

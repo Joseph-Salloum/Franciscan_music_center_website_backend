@@ -33,7 +33,7 @@ public class VideoController {
 
     @GetMapping
     public List<VideoResponse> getAll() {
-        return videoService.getAll();
+        return videoService.getAllVideos();
     }
 
     @GetMapping("/search")

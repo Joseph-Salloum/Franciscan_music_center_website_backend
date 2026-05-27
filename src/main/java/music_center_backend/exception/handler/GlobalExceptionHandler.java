@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import music_center_backend.exception.exceptions.MalformedIdException;
+import music_center_backend.exception.exceptions.MedalNotFoundException;
 import music_center_backend.exception.exceptions.IllegalOperationException;
 import music_center_backend.exception.exceptions.InvalidCredentialsException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
@@ -44,22 +45,34 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ApiError> handleInvalidCredentialsException(InvalidCredentialsException e, HttpServletRequest request) {
-        ApiError error = new ApiError(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getRequestURI());
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
-    }
-
     @ExceptionHandler(VideoNotFoundException.class)
     public ResponseEntity<ApiError> handleVideoNotFoundException(VideoNotFoundException e, HttpServletRequest request) {
         ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(MedalNotFoundException.class)
+    public ResponseEntity<ApiError> handleMedalNotFoundException(MedalNotFoundException e, HttpServletRequest request) {
+        ApiError error = new ApiError(HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiError> handleInvalidCredentialsException(InvalidCredentialsException e, HttpServletRequest request) {
+        ApiError error = new ApiError(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(IllegalOperationException.class)
     public ResponseEntity<ApiError> handleIllegalOperationException(IllegalOperationException e, HttpServletRequest request) {
         ApiError error = new ApiError(HttpStatus.FORBIDDEN.value(), e.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
