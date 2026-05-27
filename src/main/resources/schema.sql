@@ -48,31 +48,6 @@ CREATE TABLE IF NOT EXISTS lessons (
         CHECK (mark BETWEEN 0 AND 10)
 );
 
-CREATE TABLE IF NOT EXISTS marks (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    public_id VARCHAR(255) UNIQUE NOT NULL,
-    student_id BIGINT NOT NULL,
-    teacher_id BIGINT NOT NULL,
-    mark SMALLINT NOT NULL DEFAULT 0,
-    date DATE NOT NULL DEFAULT CURRENT_DATE,
-    instrument BOOLEAN NOT NULL DEFAULT TRUE,
-
-    CONSTRAINT fk_marks_student
-        FOREIGN KEY (student_id)
-        REFERENCES students(id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_marks_teacher
-        FOREIGN KEY (teacher_id)
-        REFERENCES teachers(id)
-        ON DELETE RESTRICT,
-
-    CONSTRAINT check_mark_value
-        CHECK (mark BETWEEN 0 AND 10),
-    CONSTRAINT unique_mark_entry
-        UNIQUE (student_id, teacher_id, date, instrument)
-);
-
 CREATE TABLE IF NOT EXISTS medals (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     medal_name VARCHAR(255) UNIQUE NOT NULL,
