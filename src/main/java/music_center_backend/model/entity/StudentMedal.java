@@ -35,7 +35,7 @@ public class StudentMedal {
     public StudentMedal(Student student, Medal medal, LocalDate medalDate) {
         this.student = student;
         this.medal = medal;
-        this.medalDate = medalDate;
+        this.medalDate = (medalDate == null) ? LocalDate.now() : medalDate;
     }
 
     public Long getId() { return this.id; }
