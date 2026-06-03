@@ -1,5 +1,6 @@
 package music_center_backend.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -32,11 +33,27 @@ public class StudentMedalService {
     public List<StudentMedalResponse> getAll() {
         return toResponse(studentMedalRepository.findAll());
     }
-    public List<StudentMedalResponse> getByStudentPublicId(String studentPublicId) {
-        return toResponse(studentMedalRepository.findByStudentPublicId(studentPublicId));
+    public List<StudentMedalResponse> searchMedals(String studentPublicId, LocalDate startDate, LocalDate endDate) {
+        return toResponse(studentMedalRepository.searchStudentMedals(studentPublicId, startDate, endDate));
     }
     public List<StudentMedalResponse> getByMedalName(String medalName) {
-        return toResponse(studentMedalRepository.findByMedalMedalName(medalName));
+        return toResponse(studentMedalRepository.findByMedal_MedalName(medalName));
+    }
+
+    //  Re-check assign and remove logic
+    @Transactional
+    public StudentMedalResponse assign(AssignStudentMedalRequest request) {
+        StudentMedal studentMedal = mapFromAssignRequest(request);
+
+        return toResponse(studentMedalRepository.save(studentMedal));
+    }
+
+    @Transactional
+    public void remove(String studentPublicId, String medalName, LocalDate medalDate) {
+        StudentMedal studentMedal = studentMedalRepository.findByStudent_PublicIdAndMedal_MedalNameAndMedalDate(studentPublicId, medalName, medalDate)
+                            .orElseThrow(() -> new MedalNotFoundException("No " + medalName + " assigned to " + studentPublicId + " at " + medalDate));
+
+        studentMedalRepository.deleteById(studentMedal.getId());
     }
 
     private StudentMedal mapFromAssignRequest(AssignStudentMedalRequest request) {
@@ -45,7 +62,7 @@ public class StudentMedalService {
         Medal medal = medalRepository.findByMedalName(request.getMedalName())
                             .orElseThrow(() -> new MedalNotFoundException("No medal with name " + request.getMedalName()));
         
-        StudentMedal studentMedal = new StudentMedal(student, medal, null);
+        StudentMedal studentMedal = new StudentMedal(student, medal, request.getMedalDate());
         return studentMedal;
     }
     private StudentMedalResponse toResponse(StudentMedal studentMedal) {
