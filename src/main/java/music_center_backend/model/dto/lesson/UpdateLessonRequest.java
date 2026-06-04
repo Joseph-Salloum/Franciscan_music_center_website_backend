@@ -2,7 +2,7 @@ package music_center_backend.model.dto.lesson;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.PositiveOrZero;
-import music_center_backend.model.constants.State;
+import music_center_backend.model.constant.State;
 
 public class UpdateLessonRequest {
     private State state;

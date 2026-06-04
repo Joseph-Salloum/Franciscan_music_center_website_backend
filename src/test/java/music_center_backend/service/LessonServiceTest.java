@@ -19,8 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import music_center_backend.exception.exceptions.IllegalOperationException;
-import music_center_backend.model.constants.Specialization;
-import music_center_backend.model.constants.State;
+import music_center_backend.model.constant.Specialization;
+import music_center_backend.model.constant.State;
 import music_center_backend.model.dto.lesson.CreateLessonRequest;
 import music_center_backend.model.dto.lesson.LessonResponse;
 import music_center_backend.model.dto.lesson.UpdateLessonRequest;

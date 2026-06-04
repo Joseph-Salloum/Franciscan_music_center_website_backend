@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import music_center_backend.model.constants.Specialization;
+import music_center_backend.model.constant.Specialization;
 import music_center_backend.model.entity.Student;
 import music_center_backend.model.entity.Teacher;
 import music_center_backend.repository.StudentRepository;

@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import music_center_backend.exception.exceptions.IllegalOperationException;
-import music_center_backend.model.constants.Specialization;
+import music_center_backend.model.constant.Specialization;
 import music_center_backend.model.dto.student.CreateStudentRequest;
 import music_center_backend.model.dto.student.StudentResponse;
 import music_center_backend.model.dto.student.UpdateStudentRequest;

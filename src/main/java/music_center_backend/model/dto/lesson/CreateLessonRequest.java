@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import music_center_backend.model.constants.State;
+import music_center_backend.model.constant.State;
 
 public class CreateLessonRequest {
     private LocalDate date;

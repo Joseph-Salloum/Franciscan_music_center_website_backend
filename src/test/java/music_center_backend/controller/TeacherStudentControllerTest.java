@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import music_center_backend.model.constants.State;
+import music_center_backend.model.constant.State;
 import music_center_backend.model.dto.lesson.CreateLessonRequest;
 import music_center_backend.model.dto.lesson.LessonResponse;
 import music_center_backend.model.dto.lesson.UpdateLessonRequest;

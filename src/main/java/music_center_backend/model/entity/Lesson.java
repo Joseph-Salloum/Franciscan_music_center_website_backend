@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import music_center_backend.model.constants.State;
+import music_center_backend.model.constant.State;
 
 @Entity
 @Table(name = "lessons")

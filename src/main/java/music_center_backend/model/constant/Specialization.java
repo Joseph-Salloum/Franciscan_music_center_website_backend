@@ -1,4 +1,4 @@
-package music_center_backend.model.constants;
+package music_center_backend.model.constant;
 
 public enum Specialization {
     SOLFEIGE,

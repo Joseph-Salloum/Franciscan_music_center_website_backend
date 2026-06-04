@@ -1,0 +1,111 @@
+package music_center_backend.controller;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
+import lombok.RequiredArgsConstructor;
+import music_center_backend.model.dto.lesson.LessonResponse;
+import music_center_backend.model.dto.medal.CreateMedalRequest;
+import music_center_backend.model.dto.medal.MedalResponse;
+import music_center_backend.model.dto.student.CreateStudentRequest;
+import music_center_backend.model.dto.student.StudentResponse;
+import music_center_backend.model.dto.studentmedal.AssignStudentMedalRequest;
+import music_center_backend.model.dto.studentmedal.StudentMedalResponse;
+import music_center_backend.model.dto.teacher.CreateTeacherRequest;
+import music_center_backend.model.dto.teacher.TeacherResponse;
+import music_center_backend.model.dto.video.CreateVideoRequest;
+import music_center_backend.model.dto.video.VideoResponse;
+import music_center_backend.service.LessonService;
+import music_center_backend.service.MedalService;
+import music_center_backend.service.StudentMedalService;
+import music_center_backend.service.StudentService;
+import music_center_backend.service.TeacherService;
+import music_center_backend.service.VideoService;
+import music_center_backend.util.ValidationGroups;
+
+@RestController
+@RequestMapping("/api/v1/admin/{adminPublicId}")
+@RequiredArgsConstructor
+public class AdminController {
+    private final StudentService studentService;
+    private final TeacherService teacherService;
+    private final MedalService medalService;
+    private final StudentMedalService studentMedalService;
+    private final VideoService videoService;
+    private final LessonService lessonService;
+
+    @GetMapping("/profile")
+    public TeacherResponse getMyProfile(@PathVariable String adminPublicId) {
+        return teacherService.getByPublicId(adminPublicId);
+    }
+    @GetMapping("/teachers")
+    public List<TeacherResponse> getAllTeachers() {
+        //  make sure to exclude self account from this list
+        return teacherService.getAll();
+    }
+    @GetMapping("/teachers/{teacherPublicId}/students")
+    public List<StudentResponse> getTeacherStudents(@PathVariable String teacherPublicId) {
+        return studentService.getByTeacherPublicId(teacherPublicId);
+    }
+    @GetMapping("/teachers/{teacherPublicId}/students/{studentPublicId}/lessons")
+    public List<LessonResponse> getStudentLessons(
+            @PathVariable String studentPublicId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        
+        return lessonService.getLessons(studentPublicId, date, startDate, endDate);
+    }
+    @GetMapping("/medals")
+    public List<MedalResponse> getAllMedals() {
+        return medalService.getAllMedals();
+    }
+    @GetMapping("/medals-history")
+    public List<StudentMedalResponse> getAllStudentMedals() {
+        //  this endpoint will work as a getter for assigning and removing history
+        return studentMedalService.getAll();
+    }
+    @GetMapping("/teachers/{teacherPublicId}/students/{studentPublicId}/medals")
+    public List<StudentMedalResponse> getStudentMedals(
+            @PathVariable String studentPublicId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        
+        return studentMedalService.searchMedals(studentPublicId, startDate, endDate);
+    }
+
+    @PostMapping("/teachers")
+    public ResponseEntity<TeacherResponse> addTeacher(@Valid @RequestBody CreateTeacherRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(teacherService.createTeacher(request));
+    }
+    @PostMapping("/teacher/{teacherPublicId}/students")
+    public ResponseEntity<StudentResponse> addStudent(@Validated({ValidationGroups.NormalStudentCreation.class, Default.class}) @RequestBody CreateStudentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(studentService.createStudent(request));
+    }
+    @PostMapping("/medals")
+    public ResponseEntity<MedalResponse> addMedal(@Valid @RequestBody CreateMedalRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(medalService.createMedal(request));
+    }
+    @PostMapping("/videos")
+    public ResponseEntity<VideoResponse> addVideo(@Valid @RequestBody CreateVideoRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(videoService.createVideo(request));
+    }
+    @PostMapping("/teachers/{teacherPublicId}/students/{studentPublicId}")
+    public StudentMedalResponse assignMedal(@Valid @RequestBody AssignStudentMedalRequest request) {
+        return studentMedalService.assign(request);
+    }
+}

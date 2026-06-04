@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import music_center_backend.model.constants.Specialization;
+import music_center_backend.model.constant.Specialization;
 
 @Entity
 @Table(name = "teachers")

@@ -19,7 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import music_center_backend.exception.exceptions.MedalNotFoundException;
-import music_center_backend.model.constants.Specialization;
+import music_center_backend.model.constant.Specialization;
 import music_center_backend.model.dto.studentmedal.AssignStudentMedalRequest;
 import music_center_backend.model.dto.studentmedal.StudentMedalResponse;
 import music_center_backend.model.entity.Medal;

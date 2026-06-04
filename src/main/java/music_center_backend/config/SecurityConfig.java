@@ -50,6 +50,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/api/v1/admin/**").hasRole("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())

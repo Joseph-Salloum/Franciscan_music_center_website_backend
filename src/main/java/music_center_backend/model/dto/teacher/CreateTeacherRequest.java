@@ -3,7 +3,7 @@ package music_center_backend.model.dto.teacher;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import music_center_backend.model.constants.Specialization;
+import music_center_backend.model.constant.Specialization;
 
 public class CreateTeacherRequest {
     @NotBlank
