@@ -29,6 +29,7 @@ import music_center_backend.model.entity.Student;
 import music_center_backend.model.entity.Teacher;
 import music_center_backend.repository.StudentRepository;
 import music_center_backend.repository.TeacherRepository;
+import music_center_backend.security.CurrentUserService;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
@@ -42,11 +43,14 @@ class StudentServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private CurrentUserService currentUserService;
+
     private StudentService studentService;
 
     @BeforeEach
     void setUp() {
-        studentService = new StudentService(studentRepository, teacherRepository, passwordEncoder);
+        studentService = new StudentService(studentRepository, teacherRepository, passwordEncoder, currentUserService);
     }
 
     @Test
@@ -102,9 +106,10 @@ class StudentServiceTest {
         request.setTakingSolfeige(false);
 
         when(studentRepository.findByPublicId("student-1")).thenReturn(Optional.of(student));
+        when(currentUserService.getPublicId()).thenReturn("teacher-1");
         when(teacherRepository.findByPublicId("teacher-1")).thenReturn(Optional.of(teacher));
 
-        StudentResponse response = studentService.updateStudent("student-1", "teacher-1", request);
+        StudentResponse response = studentService.updateStudent("student-1", null, request);
 
         assertEquals("Mia Updated", response.getName());
         assertEquals("Violin", response.getInstrument());
@@ -112,15 +117,15 @@ class StudentServiceTest {
     }
 
     @Test
-    @DisplayName("updateStudent should reject a non-admin teacher who does not own the student")
-    void updateStudentShouldRejectNonOwnerTeacher() {
+    @DisplayName("updateStudent should reject admin flow when teacher is not admin and not owner")
+    void updateStudentShouldRejectAdminFlowForNonOwner() {
         Teacher owner = new Teacher("teacher-1", "Ms. Lee", Specialization.PIANO, false);
-        Teacher otherTeacher = new Teacher("teacher-2", "Mr. Kim", Specialization.GUITAR, false);
+        Teacher actor = new Teacher("teacher-2", "Mr. Kim", Specialization.GUITAR, false);
         Student student = new Student("student-1", "Mia", LocalDate.of(2024, 1, 10), "Piano", owner, true);
         UpdateStudentRequest request = new UpdateStudentRequest();
 
         when(studentRepository.findByPublicId("student-1")).thenReturn(Optional.of(student));
-        when(teacherRepository.findByPublicId("teacher-2")).thenReturn(Optional.of(otherTeacher));
+        when(teacherRepository.findByPublicId("teacher-2")).thenReturn(Optional.of(actor));
 
         assertThrows(IllegalOperationException.class, () -> studentService.updateStudent("student-1", "teacher-2", request));
     }

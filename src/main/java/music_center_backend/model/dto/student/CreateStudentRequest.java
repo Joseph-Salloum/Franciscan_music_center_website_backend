@@ -20,8 +20,8 @@ public class CreateStudentRequest {
     @Size(max = 255)
     private String instrument;
 
-    @NotBlank(groups = ValidationGroups.NormalStudentCreation.class)
-    @Null(groups = ValidationGroups.TeacherStudentCreation.class)
+    @NotBlank(groups = ValidationGroups.AdminCreateStudent.class)
+    @Null(groups = ValidationGroups.TeacherCreateStudent.class)
     private String teacherPublicId;
 
     private boolean takingSolfeige;

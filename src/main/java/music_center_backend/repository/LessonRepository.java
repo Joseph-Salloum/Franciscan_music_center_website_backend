@@ -23,4 +23,5 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
     List<Lesson> findByTeacherPublicId(String teacherPublicId);
     Optional<Lesson> findByPublicId(String publicId);
+    boolean existsByPublicIdAndTeacher_PublicIdAndStudent_PublicId(String lessonPublicId, String teacherPublicId, String studentPublicId);
 }

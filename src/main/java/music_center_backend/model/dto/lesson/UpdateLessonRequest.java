@@ -9,17 +9,17 @@ public class UpdateLessonRequest {
 
     @PositiveOrZero
     @Max(10)
-    private short mark;
+    private Short mark;
 
     private String note;
 
     public UpdateLessonRequest() {}
 
     public State getState() { return this.state; }
-    public short getMark() { return this.mark; }
+    public Short getMark() { return this.mark; }
     public String getNote() { return this.note; }
 
     public void setState(State state) { this.state = state; }
-    public void setMark(short mark) { this.mark = mark; }
+    public void setMark(Short mark) { this.mark = mark; }
     public void setNote(String note) { this.note = note; }
 }

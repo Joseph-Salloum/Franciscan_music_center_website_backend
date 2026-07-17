@@ -38,7 +38,7 @@ import music_center_backend.service.VideoService;
 import music_center_backend.util.ValidationGroups;
 
 @RestController
-@RequestMapping("/api/v1/admin/{adminPublicId}")
+@RequestMapping("/api/v1/admin/me")
 @RequiredArgsConstructor
 public class AdminController {
     private final StudentService studentService;
@@ -49,8 +49,8 @@ public class AdminController {
     private final LessonService lessonService;
 
     @GetMapping("/profile")
-    public TeacherResponse getMyProfile(@PathVariable String adminPublicId) {
-        return teacherService.getByPublicId(adminPublicId);
+    public TeacherResponse getMyProfile() {
+        return teacherService.getMyProfile();
     }
     @GetMapping("/teachers")
     public List<TeacherResponse> getAllTeachers() {
@@ -93,7 +93,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(teacherService.createTeacher(request));
     }
     @PostMapping("/teacher/{teacherPublicId}/students")
-    public ResponseEntity<StudentResponse> addStudent(@Validated({ValidationGroups.NormalStudentCreation.class, Default.class}) @RequestBody CreateStudentRequest request) {
+    public ResponseEntity<StudentResponse> addStudent(@Validated({ValidationGroups.AdminCreateStudent.class, Default.class}) @RequestBody CreateStudentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.createStudent(request));
     }
     @PostMapping("/medals")
@@ -105,7 +105,9 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(videoService.createVideo(request));
     }
     @PostMapping("/teachers/{teacherPublicId}/students/{studentPublicId}")
-    public StudentMedalResponse assignMedal(@Valid @RequestBody AssignStudentMedalRequest request) {
-        return studentMedalService.assign(request);
+    public StudentMedalResponse assignMedal(
+            @PathVariable String studentPublicId,
+            @Valid @RequestBody AssignStudentMedalRequest request) {
+        return studentMedalService.assign(studentPublicId, request);
     }
 }

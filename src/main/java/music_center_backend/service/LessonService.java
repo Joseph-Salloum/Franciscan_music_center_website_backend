@@ -3,10 +3,10 @@ package music_center_backend.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import music_center_backend.exception.exceptions.IllegalOperationException;
 import music_center_backend.exception.exceptions.LessonNotFoundException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
 import music_center_backend.model.dto.lesson.CreateLessonRequest;
@@ -18,6 +18,7 @@ import music_center_backend.model.entity.Teacher;
 import music_center_backend.repository.LessonRepository;
 import music_center_backend.repository.StudentRepository;
 import music_center_backend.repository.TeacherRepository;
+import music_center_backend.security.CurrentUserService;
 import music_center_backend.util.HashGenerator;
 
 @Service
@@ -26,14 +27,21 @@ public class LessonService {
     private final LessonRepository lessonRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final CurrentUserService currentUserService;
     
-    public LessonService(LessonRepository lessonRepository, StudentRepository studentRepository, TeacherRepository teacherRepository) {
+    public LessonService(LessonRepository lessonRepository, StudentRepository studentRepository, TeacherRepository teacherRepository, CurrentUserService currentUserService) {
         this.lessonRepository = lessonRepository;
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;
+        this.currentUserService = currentUserService;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('TEACHER') and @authoritiesChecker.currentOwnStudent(#studentPublicId))")
     public List<LessonResponse> getLessons(String studentPublicId, LocalDate date, LocalDate startDate, LocalDate endDate) {
+        return toResponse(lessonRepository.getLessons(studentPublicId, date, startDate, endDate));
+    }
+    public List<LessonResponse> getMyLessons(LocalDate date, LocalDate startDate, LocalDate endDate) {
+        String studentPublicId = currentUserService.getPublicId();
         return toResponse(lessonRepository.getLessons(studentPublicId, date, startDate, endDate));
     }
     public List<LessonResponse> getByTeacherPublicId(String teacherPublicId) {
@@ -41,11 +49,12 @@ public class LessonService {
     }
 
     @Transactional
-    public LessonResponse createLesson(String teacherPublicId, String studentPublicId, CreateLessonRequest request) {
+    @PreAuthorize("hasRole('TEACHER') and @authoritiesChecker.currentOwnStudent(#studentPublicId)")
+    public LessonResponse createLesson(String studentPublicId, CreateLessonRequest request) {
         Student student = studentRepository.findByPublicId(studentPublicId)
                 .orElseThrow(() -> new UserNotFoundException("Student with public ID " + studentPublicId + " not found"));
-        Teacher teacher = teacherRepository.findByPublicId(teacherPublicId)
-                .orElseThrow(() -> new UserNotFoundException("Teacher with public ID " + teacherPublicId + " not found"));
+        Teacher teacher = teacherRepository.findByPublicId(currentUserService.getPublicId())
+                .orElseThrow(() -> new UserNotFoundException("Teacher with public ID " + currentUserService.getPublicId() + " not found"));
         
         String publicId = createPublicId();
         Lesson lesson = mapFromCreateRequest(publicId, request, student, teacher);
@@ -54,32 +63,30 @@ public class LessonService {
     }
 
     @Transactional
-    public LessonResponse updateLesson(String publicId, String teacherPublicId, String studentPublicId, UpdateLessonRequest request) {
-        Lesson lesson = lessonRepository.findByPublicId(publicId)
-                .orElseThrow(() -> new LessonNotFoundException("Lesson with public ID " + publicId + " not found"));
-        Teacher teacher = teacherRepository.findByPublicId(teacherPublicId)
-                .orElseThrow(() -> new UserNotFoundException("Teacher with public ID " + teacherPublicId + " not found"));
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('TEACHER') and @authoritiesChecker.canAccessStudentLesson(#lessonPublicId, #studentPublicId))")
+    public LessonResponse updateLesson(String lessonPublicId, String studentPublicId, UpdateLessonRequest request) {
+        Lesson lesson = lessonRepository.findByPublicId(lessonPublicId)
+                .orElseThrow(() -> new LessonNotFoundException("Lesson with public ID " + lessonPublicId + " not found"));
         
-        if (!teacher.isAdmin() && (!lesson.getTeacher().getPublicId().equals(teacherPublicId) || !lesson.getStudent().getPublicId().equals(studentPublicId))) {
-            throw new IllegalOperationException("Lesson with public ID " + publicId + " does not belong to the specified student and teacher");
+        if (request.getMark() != null) {
+            lesson.setMark(request.getMark());
         }
-
-        lesson.setMark(request.getMark());
-        lesson.setState(request.getState());
-        lesson.setNote(request.getNote());
+        if (request.getState() != null) {
+            lesson.setState(request.getState());
+        }
+        if (request.getNote() != null) {
+            lesson.setNote(request.getNote());
+        }
 
         return toResponse(lesson);
     }
 
     @Transactional
-    public void deleteLesson(String publicId, String teacherPublicId, String studentPublicId) {
-        Lesson lesson = lessonRepository.findByPublicId(publicId)
-                .orElseThrow(() -> new LessonNotFoundException("Lesson with public ID " + publicId + " not found"));
+    @PreAuthorize("hasRole('TEACHER') and @authoritiesChecker.canAccessStudentLesson(#lessonPublicId, #studentPublicId)")
+    public void deleteLesson(String lessonPublicId, String studentPublicId) {
+        Lesson lesson = lessonRepository.findByPublicId(lessonPublicId)
+                .orElseThrow(() -> new LessonNotFoundException("Lesson with public ID " + lessonPublicId + " not found"));
             
-        if (!lesson.getTeacher().getPublicId().equals(teacherPublicId) || !lesson.getStudent().getPublicId().equals(studentPublicId)) {
-            throw new IllegalOperationException("Lesson with public ID " + publicId + " does not belong to the specified student and teacher");
-        }
-
         lessonRepository.deleteById(lesson.getId());
     }
 

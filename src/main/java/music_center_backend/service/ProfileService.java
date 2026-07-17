@@ -9,14 +9,17 @@ import lombok.RequiredArgsConstructor;
 import music_center_backend.model.dto.profile.StudentProfileResponse;
 import music_center_backend.model.dto.student.StudentResponse;
 import music_center_backend.model.dto.studentmedal.StudentMedalResponse;
+import music_center_backend.security.CurrentUserService;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
     private final StudentService studentService;
     private final StudentMedalService studentMedalService;
+    private final CurrentUserService currentUserService;
 
-    public StudentProfileResponse getStudentProfile(String studentPublicId) {
+    public StudentProfileResponse getMyStudentProfile() {
+        String studentPublicId = currentUserService.getPublicId();
         StudentResponse student = studentService.getByPublicId(studentPublicId);
 
         LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);

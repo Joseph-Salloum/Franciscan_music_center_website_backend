@@ -3,6 +3,7 @@ package music_center_backend.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,7 @@ public class VideoService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public VideoResponse createVideo(CreateVideoRequest request) {
         String publicId = createPublicId();
 
@@ -48,6 +50,7 @@ public class VideoService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public VideoResponse updateVideo(String publicId, UpdateVideoRequest request) {
         Video video = videoRepository.findByPublicId(publicId)
                             .orElseThrow(() -> new VideoNotFoundException("No video with publicId " + publicId));
@@ -69,6 +72,7 @@ public class VideoService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteVideo(String publicId) {
         Video video = videoRepository.findByPublicId(publicId)
                             .orElseThrow(() -> new VideoNotFoundException("No video with publicId " + publicId));

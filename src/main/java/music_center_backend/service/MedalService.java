@@ -2,6 +2,7 @@ package music_center_backend.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ public class MedalService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public MedalResponse createMedal(CreateMedalRequest request) {
         if (medalRepository.findByMedalName(request.getMedalName()).isPresent()) {
             throw new IllegalArgumentException("A medal with the name \'" + request.getMedalName() + "\' already exists");

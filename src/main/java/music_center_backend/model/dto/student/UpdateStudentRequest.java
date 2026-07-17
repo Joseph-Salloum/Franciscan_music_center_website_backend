@@ -1,6 +1,8 @@
 package music_center_backend.model.dto.student;
 
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
+import music_center_backend.util.ValidationGroups;
 
 public class UpdateStudentRequest {
     @Size(min = 1, max = 255)
@@ -10,6 +12,7 @@ public class UpdateStudentRequest {
     private String instrument;
     
     @Size(max = 255)
+    @Null(groups = ValidationGroups.TeacherUpdateStudent.class)
     private String teacherPublicId;
 
     private Boolean takingSolfeige;

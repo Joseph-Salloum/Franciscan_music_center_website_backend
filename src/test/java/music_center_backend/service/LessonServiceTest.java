@@ -18,7 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import music_center_backend.exception.exceptions.IllegalOperationException;
+import music_center_backend.exception.exceptions.LessonNotFoundException;
 import music_center_backend.model.constant.Specialization;
 import music_center_backend.model.constant.State;
 import music_center_backend.model.dto.lesson.CreateLessonRequest;
@@ -30,6 +30,7 @@ import music_center_backend.model.entity.Teacher;
 import music_center_backend.repository.LessonRepository;
 import music_center_backend.repository.StudentRepository;
 import music_center_backend.repository.TeacherRepository;
+import music_center_backend.security.CurrentUserService;
 
 @ExtendWith(MockitoExtension.class)
 class LessonServiceTest {
@@ -43,11 +44,14 @@ class LessonServiceTest {
     @Mock
     private TeacherRepository teacherRepository;
 
+    @Mock
+    private CurrentUserService currentUserService;
+
     private LessonService lessonService;
 
     @BeforeEach
     void setUp() {
-        lessonService = new LessonService(lessonRepository, studentRepository, teacherRepository);
+        lessonService = new LessonService(lessonRepository, studentRepository, teacherRepository, currentUserService);
     }
 
     @Test
@@ -75,10 +79,11 @@ class LessonServiceTest {
         request.setNote("Needs work");
 
         when(studentRepository.findByPublicId("student-1")).thenReturn(Optional.of(student));
+        when(currentUserService.getPublicId()).thenReturn("teacher-1");
         when(teacherRepository.findByPublicId("teacher-1")).thenReturn(Optional.of(teacher));
         when(lessonRepository.save(any(Lesson.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        LessonResponse response = lessonService.createLesson("teacher-1", "student-1", request);
+        LessonResponse response = lessonService.createLesson("student-1", request);
 
         ArgumentCaptor<Lesson> lessonCaptor = ArgumentCaptor.forClass(Lesson.class);
         verify(lessonRepository).save(lessonCaptor.capture());
@@ -89,11 +94,10 @@ class LessonServiceTest {
     }
 
     @Test
-    @DisplayName("updateLesson should allow an admin teacher to change any lesson")
-    void updateLessonShouldAllowAdminTeacher() {
+    @DisplayName("updateLesson should update provided fields")
+    void updateLessonShouldUpdateProvidedFields() {
         Student student = createStudent();
         Teacher owner = createTeacher(false);
-        Teacher admin = new Teacher("teacher-admin", "Admin", Specialization.GUITAR, true);
         Lesson lesson = new Lesson("lesson-1", LocalDate.of(2025, 3, 5), student, owner, State.ABSENT, (short) 4, "Old note", true);
         UpdateLessonRequest request = new UpdateLessonRequest();
         request.setState(State.PRESENT);
@@ -101,9 +105,8 @@ class LessonServiceTest {
         request.setNote("Improved");
 
         when(lessonRepository.findByPublicId("lesson-1")).thenReturn(Optional.of(lesson));
-        when(teacherRepository.findByPublicId("teacher-admin")).thenReturn(Optional.of(admin));
 
-        LessonResponse response = lessonService.updateLesson("lesson-1", "teacher-admin", "student-1", request);
+        LessonResponse response = lessonService.updateLesson("lesson-1", "student-1", request);
 
         assertEquals("PRESENT", response.getState());
         assertEquals(10, response.getMark());
@@ -111,18 +114,17 @@ class LessonServiceTest {
     }
 
     @Test
-    @DisplayName("updateLesson should reject a non-admin teacher who does not own the lesson")
-    void updateLessonShouldRejectMismatchedTeacher() {
+    @DisplayName("updateLesson should throw when lesson does not exist")
+    void updateLessonShouldThrowWhenLessonMissing() {
         Student student = createStudent();
         Teacher owner = createTeacher(false);
-        Teacher otherTeacher = new Teacher("teacher-2", "Mr. Kim", Specialization.VIOLIN, false);
+        @SuppressWarnings("unused")
         Lesson lesson = new Lesson("lesson-1", LocalDate.of(2025, 3, 5), student, owner, State.ABSENT, (short) 4, "Old note", true);
         UpdateLessonRequest request = new UpdateLessonRequest();
 
-        when(lessonRepository.findByPublicId("lesson-1")).thenReturn(Optional.of(lesson));
-        when(teacherRepository.findByPublicId("teacher-2")).thenReturn(Optional.of(otherTeacher));
+        when(lessonRepository.findByPublicId("lesson-1")).thenReturn(Optional.empty());
 
-        assertThrows(IllegalOperationException.class, () -> lessonService.updateLesson("lesson-1", "teacher-2", "student-1", request));
+        assertThrows(LessonNotFoundException.class, () -> lessonService.updateLesson("lesson-1", "student-1", request));
     }
 
     @Test
@@ -134,7 +136,7 @@ class LessonServiceTest {
 
         when(lessonRepository.findByPublicId("lesson-1")).thenReturn(Optional.of(lesson));
 
-        lessonService.deleteLesson("lesson-1", "teacher-1", "student-1");
+        lessonService.deleteLesson("lesson-1", "student-1");
 
         verify(lessonRepository).deleteById(lesson.getId());
     }

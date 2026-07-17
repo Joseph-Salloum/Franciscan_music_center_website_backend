@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,23 +16,22 @@ import music_center_backend.service.LessonService;
 import music_center_backend.service.ProfileService;
 
 @RestController
-@RequestMapping("/api/v1/students/{studentPublicId}")
+@RequestMapping("/api/v1/students/me")
 @RequiredArgsConstructor
 public class StudentController {
     private final ProfileService profileService;
     private final LessonService lessonService;
 
     @GetMapping("/profile")
-    public StudentProfileResponse getStudentProfile(@PathVariable String studentPublicId) {
-        return profileService.getStudentProfile(studentPublicId);
+    public StudentProfileResponse getProfile() {
+        return profileService.getMyStudentProfile();
     }
     @GetMapping("/lessons")
     public List<LessonResponse> getLessons(
-            @PathVariable String studentPublicId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
-        return lessonService.getLessons(studentPublicId, date, startDate, endDate);
+        return lessonService.getMyLessons(date, startDate, endDate);
     }
 }

@@ -41,7 +41,7 @@ public class Lesson {
     private State state;
 
     @Column(name = "mark", nullable = false)
-    private short mark;
+    private Short mark;
 
     @Column(name = "note")
     private String note;
@@ -68,11 +68,11 @@ public class Lesson {
     public Student getStudent() { return this.student; }
     public Teacher getTeacher() { return this.teacher; }
     public State getState() { return this.state; }
-    public short getMark() { return this.mark; }
+    public Short getMark() { return this.mark; }
     public String getNote() { return this.note; }
     public boolean isInstrument() { return this.instrument; }
 
     public void setState(State state) { this.state = state; }
-    public void setMark(short mark) { this.mark = mark; }
+    public void setMark(Short mark) { this.mark = mark; }
     public void setNote(String note) { this.note = note; }
 }

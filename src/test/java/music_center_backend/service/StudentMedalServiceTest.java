@@ -68,7 +68,6 @@ class StudentMedalServiceTest {
         Student student = createStudent();
         Medal medal = new Medal("Star", "Great progress");
         AssignStudentMedalRequest request = new AssignStudentMedalRequest();
-        request.setStudentPublicId("student-1");
         request.setMedalName("Star");
         request.setMedalDate(LocalDate.of(2025, 4, 12));
 
@@ -76,7 +75,7 @@ class StudentMedalServiceTest {
         when(medalRepository.findByMedalName("Star")).thenReturn(Optional.of(medal));
         when(studentMedalRepository.save(any(StudentMedal.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        StudentMedalResponse response = studentMedalService.assign(request);
+        StudentMedalResponse response = studentMedalService.assign("student-1", request);
 
         ArgumentCaptor<StudentMedal> captor = ArgumentCaptor.forClass(StudentMedal.class);
         verify(studentMedalRepository).save(captor.capture());

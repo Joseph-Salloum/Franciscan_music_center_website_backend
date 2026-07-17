@@ -3,6 +3,7 @@ package music_center_backend.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +31,11 @@ public class StudentMedalService {
         this.medalRepository = medalRepository;
     }
 
+    @PreAuthorize("hasRole('ADMIN")
     public List<StudentMedalResponse> getAll() {
         return toResponse(studentMedalRepository.findAll());
     }
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('TEACHER') and @authoritiesChecker.currentOwnStudent(#studentPublicId))")
     public List<StudentMedalResponse> searchMedals(String studentPublicId, LocalDate startDate, LocalDate endDate) {
         return toResponse(studentMedalRepository.searchStudentMedals(studentPublicId, startDate, endDate));
     }
@@ -40,15 +43,16 @@ public class StudentMedalService {
         return toResponse(studentMedalRepository.findByMedal_MedalName(medalName));
     }
 
-    //  Re-check assign and remove logic
     @Transactional
-    public StudentMedalResponse assign(AssignStudentMedalRequest request) {
-        StudentMedal studentMedal = mapFromAssignRequest(request);
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('TEACHER') and @authoritiesChecker.currentOwnStudent(#studentPublicId))")
+    public StudentMedalResponse assign(String studentPublicId, AssignStudentMedalRequest request) {
+        StudentMedal studentMedal = mapFromAssignRequest(studentPublicId, request);
 
         return toResponse(studentMedalRepository.save(studentMedal));
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('TEACHER') and @authoritiesChecker.currentOwnStudent(#studentPublicId))")
     public void remove(String studentPublicId, String medalName, LocalDate medalDate) {
         StudentMedal studentMedal = studentMedalRepository.findByStudent_PublicIdAndMedal_MedalNameAndMedalDate(studentPublicId, medalName, medalDate)
                             .orElseThrow(() -> new MedalNotFoundException("No " + medalName + " assigned to " + studentPublicId + " at " + medalDate));
@@ -56,9 +60,9 @@ public class StudentMedalService {
         studentMedalRepository.deleteById(studentMedal.getId());
     }
 
-    private StudentMedal mapFromAssignRequest(AssignStudentMedalRequest request) {
-        Student student = studentRepository.findByPublicId(request.getStudentPublicId())
-                            .orElseThrow(() -> new UserNotFoundException("No student with id " + request.getStudentPublicId()));
+    private StudentMedal mapFromAssignRequest(String studentPublicId, AssignStudentMedalRequest request) {
+        Student student = studentRepository.findByPublicId(studentPublicId)
+                            .orElseThrow(() -> new UserNotFoundException("No student with id " + studentPublicId));
         Medal medal = medalRepository.findByMedalName(request.getMedalName())
                             .orElseThrow(() -> new MedalNotFoundException("No medal with name " + request.getMedalName()));
         
