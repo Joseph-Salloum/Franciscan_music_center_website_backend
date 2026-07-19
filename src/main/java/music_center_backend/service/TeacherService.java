@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import music_center_backend.exception.exceptions.IllegalOperationException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
 import music_center_backend.model.dto.student.StudentResponse;
 import music_center_backend.model.dto.teacher.CreateTeacherRequest;
@@ -64,6 +65,7 @@ public class TeacherService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public TeacherResponse updateTeacher(String publicId, UpdateTeacherRequest request) {
         Teacher teacher = teacherRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new UserNotFoundException("No teacher with id " + publicId));
@@ -88,6 +90,19 @@ public class TeacherService {
         }
 
         return toResponse(teacher);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteTeacher(String publicId) {
+        Teacher teacher = teacherRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new UserNotFoundException("No teacher with id " + publicId));
+        
+        if (studentService.existsByTeacherPublicId(publicId)) {
+            throw new IllegalOperationException("Cannot delete teacher because they still have assigned students");
+        }
+
+        teacherRepository.deleteById(teacher.getId());
     }
 
     private Teacher mapFromCreateRequest(String publicId, CreateTeacherRequest request) {

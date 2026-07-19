@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import music_center_backend.exception.exceptions.IllegalOperationException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
 import music_center_backend.model.dto.student.CreateStudentRequest;
 import music_center_backend.model.dto.student.StudentResponse;
@@ -48,6 +47,10 @@ public class StudentService {
                 .orElseThrow(() -> new UserNotFoundException("No teacher with id " + teacherPublicId));
         
         return toResponse(studentRepository.findByTeacherPublicId(teacherPublicId));
+    }
+
+    public boolean existsByTeacherPublicId(String teacherPublicId) {
+        return studentRepository.existsByTeacher_PublicId(teacherPublicId);
     }
 
     @Transactional
@@ -136,12 +139,8 @@ public class StudentService {
     private StudentResponse adminUpdateStudent(String publicId, String teacherPublicId, UpdateStudentRequest request) {
         Student student = studentRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new UserNotFoundException("No student with id " + publicId));
-        Teacher teacher =  teacherRepository.findByPublicId(teacherPublicId)
+        teacherRepository.findByPublicId(teacherPublicId)
                 .orElseThrow(() -> new UserNotFoundException("No teacher with id " + teacherPublicId));
-
-        if (!teacher.isAdmin() && !student.getTeacher().getPublicId().equals(teacherPublicId)) {
-            throw new IllegalOperationException("You are not the teacher of this student");
-        }
 
         if (request.getName() != null) {
             student.setName(request.getName());
@@ -153,13 +152,9 @@ public class StudentService {
             student.setTakingSolfeige(request.getTakingSolfeige());
         }
         if (request.getTeacherPublicId() != null) {
-            if (teacher.isAdmin()) {
-                Teacher newTeacher = teacherRepository.findByPublicId(request.getTeacherPublicId())
-                        .orElseThrow(() -> new UserNotFoundException("No teacher with id " + request.getTeacherPublicId()));
-                student.setTeacher(newTeacher);
-            } else {
-                throw new IllegalOperationException("Only admin teachers can change a student's teacher");
-            }
+            Teacher newTeacher = teacherRepository.findByPublicId(request.getTeacherPublicId())
+                    .orElseThrow(() -> new UserNotFoundException("No teacher with id " + request.getTeacherPublicId()));
+            student.setTeacher(newTeacher);
         }
 
         return toResponse(student);

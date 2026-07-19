@@ -10,4 +10,5 @@ import music_center_backend.model.entity.Medal;
 @Repository
 public interface MedalRepository extends JpaRepository<Medal, Long> {
     Optional<Medal> findByMedalName(String name);
+    boolean existsByMedalName(String name);
 }

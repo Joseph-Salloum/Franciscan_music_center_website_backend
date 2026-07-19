@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import music_center_backend.exception.exceptions.DuplicateMedalNameException;
 import music_center_backend.exception.exceptions.MedalNotFoundException;
 import music_center_backend.model.dto.medal.CreateMedalRequest;
 import music_center_backend.model.dto.medal.MedalResponse;
@@ -43,6 +44,7 @@ public class MedalService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public MedalResponse updateMedal(String medalName, UpdateMedalRequest request) {
         Medal medal = medalRepository.findByMedalName(medalName)
                             .orElseThrow(() -> new MedalNotFoundException("Medal with name \'" + medalName + "\' not found"));
@@ -52,6 +54,13 @@ public class MedalService {
                 throw new IllegalArgumentException("Medal name cannot be blank");
             }
             
+            if (!request.getMedalName().equals(medalName)
+                    && medalRepository.existsByMedalName(request.getMedalName())) {
+
+                throw new DuplicateMedalNameException(
+                        "Medal with name \'" + request.getMedalName() + "\' already exists");
+            }
+
             medal.setMedalName(request.getMedalName());
         }
         if (request.getMedalDescription() != null) {
@@ -66,6 +75,7 @@ public class MedalService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteMedal(String medalName) {
         Medal medal = medalRepository.findByMedalName(medalName)
                             .orElseThrow(() -> new MedalNotFoundException("Medal with name \'" + medalName + "\' not found"));

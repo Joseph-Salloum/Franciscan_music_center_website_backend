@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import music_center_backend.exception.exceptions.MalformedIdException;
 import music_center_backend.exception.exceptions.MedalNotFoundException;
+import music_center_backend.exception.exceptions.DuplicateMedalNameException;
 import music_center_backend.exception.exceptions.IllegalOperationException;
 import music_center_backend.exception.exceptions.InvalidCredentialsException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
@@ -80,6 +81,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateMedalNameException.class)
+    public ResponseEntity<ApiError> handleDuplicateMedalNameException(DuplicateMedalNameException e, HttpServletRequest request) {
         ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

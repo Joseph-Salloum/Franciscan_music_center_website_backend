@@ -15,6 +15,7 @@ public class UpdateStudentRequest {
     @Null(groups = ValidationGroups.TeacherUpdateStudent.class)
     private String teacherPublicId;
 
+    @Null(groups = ValidationGroups.TeacherUpdateStudent.class)
     private Boolean takingSolfeige;
 
     public UpdateStudentRequest() {}

@@ -94,6 +94,7 @@ public class TeacherController {
     public StudentMedalResponse assignMedal(
             @PathVariable String studentPublicId,
             @Valid @RequestBody AssignStudentMedalRequest request) {
+            
         return studentMedalService.assign(studentPublicId, request);
     }
 
@@ -102,7 +103,7 @@ public class TeacherController {
             @PathVariable String studentPublicId,
             @Validated({ValidationGroups.TeacherUpdateStudent.class, Default.class}) @RequestBody UpdateStudentRequest request) {
 
-        return studentService.updateStudent(studentPublicId, null,request);
+        return studentService.updateStudent(studentPublicId, null, request);
     }
     @PatchMapping("/students/{studentPublicId}/lessons/{lessonPublicId}")
     public LessonResponse updateLesson(
@@ -132,7 +133,7 @@ public class TeacherController {
     public ResponseEntity<Void> removeMedal(
             @PathVariable String studentPublicId,
             @PathVariable String medalName,
-            @RequestParam LocalDate medalDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate medalDate) {
         
         studentMedalService.remove(studentPublicId, medalName, medalDate);
         return ResponseEntity.noContent().build();

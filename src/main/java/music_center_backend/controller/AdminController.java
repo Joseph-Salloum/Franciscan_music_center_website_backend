@@ -7,7 +7,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,13 +23,17 @@ import lombok.RequiredArgsConstructor;
 import music_center_backend.model.dto.lesson.LessonResponse;
 import music_center_backend.model.dto.medal.CreateMedalRequest;
 import music_center_backend.model.dto.medal.MedalResponse;
+import music_center_backend.model.dto.medal.UpdateMedalRequest;
 import music_center_backend.model.dto.student.CreateStudentRequest;
 import music_center_backend.model.dto.student.StudentResponse;
+import music_center_backend.model.dto.student.UpdateStudentRequest;
 import music_center_backend.model.dto.studentmedal.AssignStudentMedalRequest;
 import music_center_backend.model.dto.studentmedal.StudentMedalResponse;
 import music_center_backend.model.dto.teacher.CreateTeacherRequest;
 import music_center_backend.model.dto.teacher.TeacherResponse;
+import music_center_backend.model.dto.teacher.UpdateTeacherRequest;
 import music_center_backend.model.dto.video.CreateVideoRequest;
+import music_center_backend.model.dto.video.UpdateVideoRequest;
 import music_center_backend.model.dto.video.VideoResponse;
 import music_center_backend.service.LessonService;
 import music_center_backend.service.MedalService;
@@ -104,10 +110,79 @@ public class AdminController {
     public ResponseEntity<VideoResponse> addVideo(@Valid @RequestBody CreateVideoRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(videoService.createVideo(request));
     }
-    @PostMapping("/teachers/{teacherPublicId}/students/{studentPublicId}")
+    @PostMapping("/teachers/{teacherPublicId}/students/{studentPublicId}/medals")
     public StudentMedalResponse assignMedal(
             @PathVariable String studentPublicId,
             @Valid @RequestBody AssignStudentMedalRequest request) {
+        
         return studentMedalService.assign(studentPublicId, request);
+    }
+
+    @PatchMapping("/teachers/{teacherPublicId}")
+    public TeacherResponse updateTeacher(
+            @PathVariable String teacherPublicId,
+            @Valid @RequestBody UpdateTeacherRequest request) {
+
+        return teacherService.updateTeacher(teacherPublicId, request);
+    }
+    @PatchMapping("/teachers/{teacherPublicId}/students/{studentPublicId}")
+    public StudentResponse updateStudent(
+            @PathVariable String teacherPublicId,
+            @PathVariable String studentPublicId,
+            @Valid @RequestBody UpdateStudentRequest request) {
+
+        return studentService.updateStudent(studentPublicId, teacherPublicId, request);
+    }
+    @PatchMapping("/medals/{medalName}")
+    public MedalResponse updateMedal(
+            @PathVariable String medalName,
+            @Valid @RequestBody UpdateMedalRequest request) {
+
+        return medalService.updateMedal(medalName, request);
+    }
+    @PatchMapping("/videos/{videoPublicId}")
+    public VideoResponse updateVideo(
+            @PathVariable String videoPublicId,
+            @Valid @RequestBody UpdateVideoRequest request) {
+
+        return videoService.updateVideo(videoPublicId, request);
+    }
+
+    @DeleteMapping("/teachers/{teacherPublicId}")
+    public ResponseEntity<Void> deleteTeacher(
+            @PathVariable String teacherPublicId) {
+
+        teacherService.deleteTeacher(teacherPublicId);
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/teachers/{teacherPublicId}/students/{studentPublicId}")
+    public ResponseEntity<Void> delteStudent(
+            @PathVariable String studentPublicId) {
+        
+        studentService.deleteStudent(studentPublicId);
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/medals/{medalName}")
+    public ResponseEntity<Void> delteMedal(
+            @PathVariable String medalName) {
+
+        medalService.deleteMedal(medalName);
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/videos/{videoPublicId}")
+    public ResponseEntity<Void> deleteVideo(
+            @PathVariable String videoPublicId) {
+
+        videoService.deleteVideo(videoPublicId);
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/teachers/{teacherPublicId}/students/{studentPublicId}/medals/{medalName}")
+    public ResponseEntity<Void> removeMedal(
+            @PathVariable String studentPublicId,
+            @PathVariable String medalName,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate medalDate) {
+
+        studentMedalService.remove(studentPublicId, medalName, medalDate);
+        return ResponseEntity.noContent().build();
     }
 }
