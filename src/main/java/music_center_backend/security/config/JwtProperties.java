@@ -1,4 +1,4 @@
-package music_center_backend.config;
+package music_center_backend.security.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;

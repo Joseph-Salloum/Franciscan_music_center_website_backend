@@ -1,4 +1,4 @@
-package music_center_backend.security;
+package music_center_backend.security.jwt;
 
 import java.io.IOException;
 

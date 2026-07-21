@@ -1,4 +1,4 @@
-package music_center_backend.security;
+package music_center_backend.security.user;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,10 +1,11 @@
-package music_center_backend.security;
+package music_center_backend.security.authorization;
 
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import music_center_backend.repository.LessonRepository;
 import music_center_backend.repository.StudentRepository;
+import music_center_backend.security.user.CurrentUserService;
 
 @Component("authoritiesChecker")
 @RequiredArgsConstructor

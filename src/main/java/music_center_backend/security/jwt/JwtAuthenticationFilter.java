@@ -1,6 +1,7 @@
-package music_center_backend.security;
+package music_center_backend.security.jwt;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import music_center_backend.security.service.JwtService;
+import music_center_backend.security.config.SecurityEndpoints;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -28,11 +29,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    private final RequestMatcher publicEndpoints = 
-            new OrRequestMatcher(
-                PathPatternRequestMatcher.withDefaults()
-                        .matcher("/auth/**")
-            );
+    private final RequestMatcher publicEndpoints = new OrRequestMatcher(
+            Arrays.stream(SecurityEndpoints.PUBLIC_ENDPOINT_PATTERNS)
+                    .map(pattern -> PathPatternRequestMatcher.withDefaults().matcher(pattern))
+                    .toArray(RequestMatcher[]::new)            
+    );
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 

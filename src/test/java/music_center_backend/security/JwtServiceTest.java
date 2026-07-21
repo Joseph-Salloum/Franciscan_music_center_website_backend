@@ -13,8 +13,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import music_center_backend.config.JwtProperties;
-import music_center_backend.security.service.JwtService;
+import music_center_backend.security.config.JwtProperties;
+import music_center_backend.security.jwt.JwtService;
 
 class JwtServiceTest {
 

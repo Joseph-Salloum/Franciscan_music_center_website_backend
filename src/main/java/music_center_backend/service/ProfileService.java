@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import music_center_backend.model.dto.profile.StudentProfileResponse;
 import music_center_backend.model.dto.student.StudentResponse;
 import music_center_backend.model.dto.studentmedal.StudentMedalResponse;
-import music_center_backend.security.CurrentUserService;
+import music_center_backend.security.user.CurrentUserService;
 
 @Service
 @RequiredArgsConstructor

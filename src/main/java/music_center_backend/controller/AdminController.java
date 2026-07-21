@@ -60,8 +60,7 @@ public class AdminController {
     }
     @GetMapping("/teachers")
     public List<TeacherResponse> getAllTeachers() {
-        //  make sure to exclude self account from this list
-        return teacherService.getAll();
+        return teacherService.getAllExceptCurrentTeacher();
     }
     @GetMapping("/teachers/{teacherPublicId}/students")
     public List<StudentResponse> getTeacherStudents(@PathVariable String teacherPublicId) {
@@ -79,11 +78,6 @@ public class AdminController {
     @GetMapping("/medals")
     public List<MedalResponse> getAllMedals() {
         return medalService.getAllMedals();
-    }
-    @GetMapping("/medals-history")
-    public List<StudentMedalResponse> getAllStudentMedals() {
-        //  this endpoint will work as a getter for assigning and removing history
-        return studentMedalService.getAll();
     }
     @GetMapping("/teachers/{teacherPublicId}/students/{studentPublicId}/medals")
     public List<StudentMedalResponse> getStudentMedals(

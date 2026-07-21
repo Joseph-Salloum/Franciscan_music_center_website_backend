@@ -1,4 +1,4 @@
-package music_center_backend.config;
+package music_center_backend.security.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import music_center_backend.security.JwtAccessDeniedHandler;
-import music_center_backend.security.JwtAuthenticationEntryPoint;
-import music_center_backend.security.JwtAuthenticationFilter;
+import music_center_backend.security.jwt.JwtAccessDeniedHandler;
+import music_center_backend.security.jwt.JwtAuthenticationEntryPoint;
+import music_center_backend.security.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
@@ -49,7 +49,7 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers(SecurityEndpoints.PUBLIC_ENDPOINT_PATTERNS).permitAll()
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/teachers/**").hasRole("TEACHER")
                 .anyRequest().authenticated()

@@ -1,4 +1,4 @@
-package music_center_backend.security.service;
+package music_center_backend.security.user;
 
 import java.util.List;
 

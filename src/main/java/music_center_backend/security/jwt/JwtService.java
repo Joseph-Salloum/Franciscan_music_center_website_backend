@@ -1,4 +1,4 @@
-package music_center_backend.security.service;
+package music_center_backend.security.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -12,7 +12,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import music_center_backend.config.JwtProperties;
+import music_center_backend.security.config.JwtProperties;
 
 @Service
 public class JwtService {

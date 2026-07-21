@@ -18,7 +18,7 @@ import music_center_backend.model.entity.Teacher;
 import music_center_backend.repository.LessonRepository;
 import music_center_backend.repository.StudentRepository;
 import music_center_backend.repository.TeacherRepository;
-import music_center_backend.security.CurrentUserService;
+import music_center_backend.security.user.CurrentUserService;
 import music_center_backend.util.HashGenerator;
 
 @Service

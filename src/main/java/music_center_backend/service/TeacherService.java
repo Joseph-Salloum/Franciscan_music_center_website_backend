@@ -9,13 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import music_center_backend.exception.exceptions.IllegalOperationException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
+import music_center_backend.model.dto.profile.TeacherPublicProfileResponse;
 import music_center_backend.model.dto.student.StudentResponse;
 import music_center_backend.model.dto.teacher.CreateTeacherRequest;
 import music_center_backend.model.dto.teacher.TeacherResponse;
 import music_center_backend.model.dto.teacher.UpdateTeacherRequest;
 import music_center_backend.model.entity.Teacher;
 import music_center_backend.repository.TeacherRepository;
-import music_center_backend.security.CurrentUserService;
+import music_center_backend.security.user.CurrentUserService;
 import music_center_backend.util.HashGenerator;
 
 @Service
@@ -34,18 +35,33 @@ public class TeacherService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<TeacherResponse> getAll() {
-        return toResponse(teacherRepository.findAll());
+    public List<TeacherResponse> getAllExceptCurrentTeacher() {
+        String currentPublicId = currentUserService.getPublicId();
+
+        return teacherRepository.findByPublicIdNot(currentPublicId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
     public TeacherResponse getMyProfile() {
         String currentUserPublicId = currentUserService.getPublicId();
         return getByPublicId(currentUserPublicId);
+    }
+    public List<TeacherPublicProfileResponse> getPublicProfiles() {
+        return teacherRepository.findAll().stream()
+                .map(teacher -> new TeacherPublicProfileResponse(
+                        teacher.getName(),
+                        teacher.getSpecialization().toString(),
+                        teacher.isAdmin()
+                ))
+                .toList();
     }
     public TeacherResponse getByPublicId(String publicId) {
         Teacher teacher = teacherRepository.findByPublicId(publicId)
                             .orElseThrow(() -> new UserNotFoundException("No teacher with id " + publicId));
         return toResponse(teacher);
     }
+    @PreAuthorize("hasRole('TEACHER')")
     public List<StudentResponse> getMyStudents() {
         String currentUserPublicId = currentUserService.getPublicId();
         return studentService.getByTeacherPublicId(currentUserPublicId);
@@ -115,9 +131,6 @@ public class TeacherService {
                         teacher.getSpecialization().toString(),
                         teacher.isAdmin()
                     );
-    }
-    private List<TeacherResponse> toResponse(List<Teacher> teachers) {
-        return teachers.stream().map(this::toResponse).toList();
     }
     private String createPublicId(CreateTeacherRequest request) {
         StringBuilder publicIdBuilder = new StringBuilder();

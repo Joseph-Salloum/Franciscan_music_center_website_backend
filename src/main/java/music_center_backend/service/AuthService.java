@@ -9,7 +9,7 @@ import music_center_backend.model.entity.Student;
 import music_center_backend.model.entity.Teacher;
 import music_center_backend.repository.StudentRepository;
 import music_center_backend.repository.TeacherRepository;
-import music_center_backend.security.service.JwtService;
+import music_center_backend.security.jwt.JwtService;
 
 @Service
 public class AuthService {
