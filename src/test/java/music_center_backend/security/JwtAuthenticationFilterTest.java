@@ -40,6 +40,18 @@ import music_center_backend.security.jwt.JwtService;
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {
 
+    private static class TestableJwtAuthenticationFilter extends JwtAuthenticationFilter {
+
+        TestableJwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService,
+                JwtAuthenticationEntryPoint authenticationEntryPoint) {
+            super(jwtService, userDetailsService, authenticationEntryPoint);
+        }
+
+        boolean exposedShouldNotFilter(MockHttpServletRequest request) throws ServletException {
+            return super.shouldNotFilter(request);
+        }
+    }
+
     @Mock
     private JwtService jwtService;
 
@@ -53,7 +65,7 @@ class JwtAuthenticationFilterTest {
 
     @BeforeEach
     void setUp() {
-        filter = new JwtAuthenticationFilter(jwtService, userDetailsService, authenticationEntryPoint);
+        filter = new TestableJwtAuthenticationFilter(jwtService, userDetailsService, authenticationEntryPoint);
         SecurityContextHolder.clearContext();
     }
 
@@ -62,21 +74,21 @@ class JwtAuthenticationFilterTest {
         SecurityContextHolder.clearContext();
     }
 
-    // @Test
-    // @DisplayName("shouldNotFilter should skip public auth endpoints")
-    // void shouldNotFilterShouldSkipPublicEndpoints() throws ServletException {
-    //     MockHttpServletRequest request = new MockHttpServletRequest("GET", "/auth/login");
+    @Test
+    @DisplayName("shouldNotFilter should skip public auth endpoints")
+    void shouldNotFilterShouldSkipPublicEndpoints() throws ServletException {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/auth/login");
 
-    //     assertEquals(true, filter.shouldNotFilter(request));
-    // }
+        assertEquals(true, ((TestableJwtAuthenticationFilter) filter).exposedShouldNotFilter(request));
+    }
 
-    // @Test
-    // @DisplayName("shouldNotFilter should not skip protected endpoints")
-    // void shouldNotFilterShouldNotSkipProtectedEndpoints() throws ServletException {
-    //     MockHttpServletRequest request = new MockHttpServletRequest("GET", "/students/1");
+    @Test
+    @DisplayName("shouldNotFilter should not skip protected endpoints")
+    void shouldNotFilterShouldNotSkipProtectedEndpoints() throws ServletException {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/students/1");
 
-    //     assertEquals(false, filter.shouldNotFilter(request));
-    // }
+        assertEquals(false, ((TestableJwtAuthenticationFilter) filter).exposedShouldNotFilter(request));
+    }
 
     @Test
     @DisplayName("doFilterInternal should continue when Authorization header is missing")
