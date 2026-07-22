@@ -11,7 +11,7 @@ import music_center_backend.model.entity.Student;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findByPublicId(String publicId);
-    List<Student> findByTeacherPublicId(String teacherPublicId);
+    List<Student> findByTeacher_PublicId(String teacherPublicId);
     boolean existsByTeacher_PublicId(String teacherPublicId);
     boolean existsByPublicIdAndTeacher_PublicId(String studentPublicId, String teacherPublicId);
 }

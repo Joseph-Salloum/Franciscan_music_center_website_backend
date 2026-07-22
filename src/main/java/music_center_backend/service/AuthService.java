@@ -3,6 +3,7 @@ package music_center_backend.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import music_center_backend.exception.exceptions.InvalidCredentialsException;
 import music_center_backend.exception.exceptions.MalformedIdException;
 import music_center_backend.model.entity.Student;
@@ -12,18 +13,12 @@ import music_center_backend.repository.TeacherRepository;
 import music_center_backend.security.jwt.JwtService;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-
-    public AuthService(TeacherRepository teacherRepository, StudentRepository studentRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
-        this.teacherRepository = teacherRepository;
-        this.studentRepository = studentRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-    }
 
     public String authenticate(String publicId, String accessCode) {
         String token = switch(publicId.split("-").length) {

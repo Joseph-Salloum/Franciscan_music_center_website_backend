@@ -21,7 +21,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     """)
     List<Lesson> getLessons(String studentPublicId, LocalDate date, LocalDate startDate, LocalDate endDate);
 
-    List<Lesson> findByTeacherPublicId(String teacherPublicId);
+    List<Lesson> findByTeacher_PublicId(String teacherPublicId);
     Optional<Lesson> findByPublicId(String publicId);
     boolean existsByPublicIdAndTeacher_PublicIdAndStudent_PublicId(String lessonPublicId, String teacherPublicId, String studentPublicId);
 }

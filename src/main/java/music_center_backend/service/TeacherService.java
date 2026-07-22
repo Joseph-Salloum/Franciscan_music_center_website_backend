@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import music_center_backend.exception.exceptions.IllegalOperationException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
 import music_center_backend.model.dto.profile.TeacherPublicProfileResponse;
@@ -21,18 +22,12 @@ import music_center_backend.util.HashGenerator;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final CurrentUserService currentUserService;
     private final StudentService studentService;
     private final PasswordEncoder passwordEncoder;
-
-    public TeacherService(TeacherRepository teacherRepository, CurrentUserService currentUserService, StudentService studentService, PasswordEncoder passwordEncoder) {
-        this.teacherRepository = teacherRepository;
-        this.currentUserService = currentUserService;
-        this.studentService = studentService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<TeacherResponse> getAllExceptCurrentTeacher() {

@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import music_center_backend.exception.exceptions.DuplicateMedalNameException;
 import music_center_backend.exception.exceptions.MedalNotFoundException;
 import music_center_backend.model.dto.medal.CreateMedalRequest;
@@ -16,12 +17,9 @@ import music_center_backend.repository.MedalRepository;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class MedalService {
     private final MedalRepository medalRepository;
-
-    public MedalService(MedalRepository medalRepository) {
-        this.medalRepository = medalRepository;
-    }
 
     public List<MedalResponse> getAllMedals() {
         return toResponse(medalRepository.findAll());

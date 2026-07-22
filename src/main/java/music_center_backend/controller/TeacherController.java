@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -38,18 +39,12 @@ import music_center_backend.util.ValidationGroups;
 
 @RestController
 @RequestMapping("/api/v1/teachers/me")
+@RequiredArgsConstructor
 public class TeacherController {
     private final TeacherService teacherService;
     private final StudentService studentService;
     private final LessonService lessonService;
     private final StudentMedalService studentMedalService;
-
-    public TeacherController(TeacherService teacherService, StudentService studentService, LessonService lessonService, StudentMedalService studentMedalService) {
-        this.teacherService = teacherService;
-        this.studentService = studentService;
-        this.lessonService = lessonService;
-        this.studentMedalService = studentMedalService;
-    }
 
     @GetMapping("/profile")
     public TeacherResponse getProfile() {

@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import music_center_backend.exception.exceptions.LessonNotFoundException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
 import music_center_backend.model.dto.lesson.CreateLessonRequest;
@@ -23,19 +24,13 @@ import music_center_backend.util.HashGenerator;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class LessonService {
     private final LessonRepository lessonRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final CurrentUserService currentUserService;
     
-    public LessonService(LessonRepository lessonRepository, StudentRepository studentRepository, TeacherRepository teacherRepository, CurrentUserService currentUserService) {
-        this.lessonRepository = lessonRepository;
-        this.studentRepository = studentRepository;
-        this.teacherRepository = teacherRepository;
-        this.currentUserService = currentUserService;
-    }
-
     @PreAuthorize("hasRole('ADMIN') or (hasRole('TEACHER') and @authoritiesChecker.currentOwnStudent(#studentPublicId))")
     public List<LessonResponse> getLessons(String studentPublicId, LocalDate date, LocalDate startDate, LocalDate endDate) {
         return toResponse(lessonRepository.getLessons(studentPublicId, date, startDate, endDate));

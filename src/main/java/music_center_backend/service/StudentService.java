@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import music_center_backend.exception.exceptions.UserNotFoundException;
 import music_center_backend.model.dto.student.CreateStudentRequest;
 import music_center_backend.model.dto.student.StudentResponse;
@@ -20,22 +21,13 @@ import music_center_backend.util.HashGenerator;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class StudentService {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
     private final CurrentUserService currentUserService;
 
-    public StudentService(StudentRepository studentRepository, TeacherRepository teacherRepository, PasswordEncoder passwordEncoder, CurrentUserService currentUserService) {
-        this.studentRepository = studentRepository;
-        this.teacherRepository = teacherRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.currentUserService = currentUserService;
-    }
-
-    public List<StudentResponse> getAll() {
-        return toResponse(studentRepository.findAll());
-    }
     public StudentResponse getByPublicId(String publicId) {
         Student student = studentRepository.findByPublicId(publicId)
                             .orElseThrow(() -> new UserNotFoundException("No student with id " + publicId));

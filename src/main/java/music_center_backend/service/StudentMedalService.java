@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import music_center_backend.exception.exceptions.MedalNotFoundException;
 import music_center_backend.exception.exceptions.UserNotFoundException;
 import music_center_backend.model.dto.studentmedal.AssignStudentMedalRequest;
@@ -20,18 +21,13 @@ import music_center_backend.repository.StudentRepository;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class StudentMedalService {
     private final StudentMedalRepository studentMedalRepository;
     private final StudentRepository studentRepository;
     private final MedalRepository medalRepository;
 
-    public StudentMedalService(StudentMedalRepository studentMedalRepository, StudentRepository studentRepository, MedalRepository medalRepository) {
-        this.studentMedalRepository = studentMedalRepository;
-        this.studentRepository = studentRepository;
-        this.medalRepository = medalRepository;
-    }
-
-    @PreAuthorize("hasRole('ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<StudentMedalResponse> getAll() {
         return toResponse(studentMedalRepository.findAll());
     }

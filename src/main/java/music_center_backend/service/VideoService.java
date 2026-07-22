@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import music_center_backend.exception.exceptions.VideoNotFoundException;
 import music_center_backend.model.dto.video.CreateVideoRequest;
 import music_center_backend.model.dto.video.UpdateVideoRequest;
@@ -17,12 +18,9 @@ import music_center_backend.util.HashGenerator;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class VideoService {
     private final VideoRepository videoRepository; 
-
-    public VideoService(VideoRepository videoRepository) {
-        this.videoRepository = videoRepository;
-    }
 
     public List<VideoResponse> getAllVideos() {
         return toResponse(videoRepository.findAll());

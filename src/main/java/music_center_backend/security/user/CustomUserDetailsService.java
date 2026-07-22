@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import music_center_backend.model.constant.Specialization;
 import music_center_backend.model.entity.Student;
 import music_center_backend.model.entity.Teacher;
@@ -17,14 +18,10 @@ import music_center_backend.repository.StudentRepository;
 import music_center_backend.repository.TeacherRepository;
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
-
-    public CustomUserDetailsService(TeacherRepository teacherRepository, StudentRepository studentRepository) {
-        this.teacherRepository = teacherRepository;
-        this.studentRepository = studentRepository;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String publicId) throws UsernameNotFoundException {

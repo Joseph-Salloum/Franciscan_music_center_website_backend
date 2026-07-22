@@ -21,9 +21,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import music_center_backend.security.config.SecurityEndpoints;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
@@ -36,12 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     );
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
-
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, JwtAuthenticationEntryPoint authenticationEntryPoint) {
-        this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
-        this.authenticationEntryPoint = authenticationEntryPoint;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 

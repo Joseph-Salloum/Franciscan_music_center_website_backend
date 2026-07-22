@@ -12,15 +12,13 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import music_center_backend.security.config.JwtProperties;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
     private final JwtProperties jwtProperties;
-
-    public JwtService(JwtProperties jwtProperties) {
-        this.jwtProperties = jwtProperties;
-    }
 
     public String generateToken(String publicId) {
         return Jwts.builder()
