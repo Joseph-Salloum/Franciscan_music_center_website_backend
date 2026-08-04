@@ -58,7 +58,7 @@ public class Lesson {
         this.teacher = teacher;
         this.state = state;
         this.mark = mark;
-        this.note = note;
+        this.note = (note == null) ? "No Notes" : note;
         this.instrument = instrument;
     }
 

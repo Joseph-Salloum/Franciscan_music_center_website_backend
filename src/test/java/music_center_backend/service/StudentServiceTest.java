@@ -60,7 +60,7 @@ class StudentServiceTest {
         Student student = new Student("student-1", "Mia", LocalDate.of(2024, 1, 10), "Piano", teacher, true);
 
         when(teacherRepository.findByPublicId("teacher-1")).thenReturn(Optional.of(teacher));
-        when(studentRepository.findByTeacherPublicId("teacher-1")).thenReturn(List.of(student));
+        when(studentRepository.findByTeacher_PublicId("teacher-1")).thenReturn(List.of(student));
 
         List<StudentResponse> responses = studentService.getByTeacherPublicId("teacher-1");
 

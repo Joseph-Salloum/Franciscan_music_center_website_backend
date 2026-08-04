@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS students (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     public_id VARCHAR(255) UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
-    date_of_start DATE NOT NULL DEFAULT CURRENT_DATE,
+    date_of_start DATE NOT NULL,
     instrument VARCHAR(255) NOT NULL,
     teacher_id BIGINT NOT NULL,
     taking_solfeige BOOLEAN NOT NULL DEFAULT FALSE,
@@ -26,12 +26,12 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE TABLE IF NOT EXISTS lessons (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     public_id VARCHAR(255) UNIQUE NOT NULL,
-    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    date DATE NOT NULL,
     student_id BIGINT NOT NULL,
     teacher_id BIGINT NOT NULL,
     state VARCHAR(50) NOT NULL,
     mark SMALLINT NOT NULL DEFAULT 0,
-    note TEXT DEFAULT 'No Notes',
+    note TEXT,
     instrument BOOLEAN NOT NULL DEFAULT TRUE,
 
     CONSTRAINT fk_lessons_student
@@ -59,11 +59,8 @@ CREATE TABLE IF NOT EXISTS videos (
     public_id VARCHAR(255) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    link TEXT NOT NULL,
-    date DATE NOT NULL DEFAULT CURRENT_DATE,
-
-    CONSTRAINT unique_video
-        UNIQUE (title, description, link, date)
+    link VARCHAR(500) NOT NULL UNIQUE,
+    date DATE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS students_medals (

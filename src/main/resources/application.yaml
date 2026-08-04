@@ -4,6 +4,10 @@ spring:
   config:
     import: optional:classpath:application-local.yaml
 
+  sql:
+    init:
+      mode: always
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -12,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop # Use 'update' or 'validate' for production
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -30,4 +34,4 @@ app:
 logging:
   level:
     root: INFO
-    music_center_backend: DEBUG
+    music_center_backend: INFO

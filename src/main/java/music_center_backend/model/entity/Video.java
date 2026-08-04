@@ -25,7 +25,7 @@ public class Video {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "link", nullable = false)
+    @Column(name = "link", nullable = false, unique = true)
     private String link;
 
     @Column(name = "date", nullable = false, updatable = false)

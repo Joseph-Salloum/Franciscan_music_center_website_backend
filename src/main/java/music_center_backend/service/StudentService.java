@@ -38,7 +38,7 @@ public class StudentService {
         teacherRepository.findByPublicId(teacherPublicId)
                 .orElseThrow(() -> new UserNotFoundException("No teacher with id " + teacherPublicId));
         
-        return toResponse(studentRepository.findByTeacherPublicId(teacherPublicId));
+        return toResponse(studentRepository.findByTeacher_PublicId(teacherPublicId));
     }
 
     public boolean existsByTeacherPublicId(String teacherPublicId) {

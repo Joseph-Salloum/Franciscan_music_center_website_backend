@@ -40,7 +40,7 @@ public class LessonService {
         return toResponse(lessonRepository.getLessons(studentPublicId, date, startDate, endDate));
     }
     public List<LessonResponse> getByTeacherPublicId(String teacherPublicId) {
-        return toResponse(lessonRepository.findByTeacherPublicId(teacherPublicId));
+        return toResponse(lessonRepository.findByTeacher_PublicId(teacherPublicId));
     }
 
     @Transactional
