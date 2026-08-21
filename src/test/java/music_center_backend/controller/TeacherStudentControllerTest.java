@@ -45,8 +45,8 @@ import music_center_backend.service.TeacherService;
 @ExtendWith(MockitoExtension.class)
 class TeacherStudentControllerTest {
 
-        @Mock
-        private TeacherService teacherService;
+	@Mock
+	private TeacherService teacherService;
 
     @Mock
     private StudentService studentService;

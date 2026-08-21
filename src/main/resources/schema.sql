@@ -1,3 +1,7 @@
+SHOW INDEX FROM students;
+SHOW INDEX FROM lessons;
+SHOW INDEX FROM students_medals;
+
 CREATE TABLE IF NOT EXISTS teachers (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     public_id VARCHAR(255) UNIQUE NOT NULL,
@@ -83,8 +87,5 @@ CREATE TABLE IF NOT EXISTS students_medals (
         UNIQUE (student_id, medal_id, medal_date)
 );
 
-CREATE INDEX idx_students_teacher ON students(teacher_id);
-CREATE INDEX idx_lessons_student ON lessons(student_id);
-CREATE INDEX idx_lessons_teacher ON lessons(teacher_id);
 CREATE INDEX idx_video_title ON videos(title);
 CREATE INDEX idx_video_date ON videos(date);

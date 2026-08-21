@@ -131,8 +131,12 @@ public class StudentService {
     private StudentResponse adminUpdateStudent(String publicId, String teacherPublicId, UpdateStudentRequest request) {
         Student student = studentRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new UserNotFoundException("No student with id " + publicId));
-        teacherRepository.findByPublicId(teacherPublicId)
-                .orElseThrow(() -> new UserNotFoundException("No teacher with id " + teacherPublicId));
+        Teacher actingTeacher = teacherRepository.findByPublicId(teacherPublicId)
+            .orElseThrow(() -> new UserNotFoundException("No teacher with id " + teacherPublicId));
+
+        if (!actingTeacher.isAdmin()) {
+            throw new music_center_backend.exception.exceptions.IllegalOperationException("Only admins can perform admin update flow");
+        }
 
         if (request.getName() != null) {
             student.setName(request.getName());
